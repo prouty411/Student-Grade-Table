@@ -12,7 +12,7 @@
     <div class="page-header">
         <!-- only show this element when the isnt on mobile -->
         <h1 class="visible-lg">Student Grade Table
-            <small class="pull-right">Grade Average : <span class="avgGrade "></span></small>
+            <small class="pull-right">Grade Average : <span class="avgGrade"></span></small>
         </h1>
     </div>
         <div class=".hidden-md hidden-large ">
@@ -46,8 +46,12 @@
                    placeholder="Student Grade">
         </div>
 
-        <button type="button" class="btn btn-success" onclick="">Add</button>
-        <button type="button" class="btn default" onclick="">Cancel</button>
+        <button type="button" class="btn btn-success" onclick="handleAddClicked()">Add</button>
+        <button type="button" class="btn default" onclick="handleCancelClick()">Cancel</button>
+        
+
+        <button type="button" class="btn btn-success getData" onclick="">Get Data from server</button>
+
     </div>
     <div class="student-list-container col-sm-8">
         <table class="student-list table">
@@ -60,18 +64,34 @@
             </tr>
             </thead>
             <tbody>
-            <tr>
-                <th>Sean</th>
-                <th> CSCI</th>
-                <th> 99</th>
-                <th>
-                    <button type="button" class="btn btn-danger">Delete</button>
-                </th>
-            </tr>
+            
             </tbody>
         </table>
     </div>
 </div>
+
+
+
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content editModal">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          ...
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
 
