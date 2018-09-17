@@ -1,51 +1,47 @@
 
 $(document).ready(initializeApp);
-
-
 var student_array =[];
 var student_array_id = [];
-
 
 function initializeApp(){
       addClickHandlersToElements();
 }
 
-
 function addClickHandlersToElements(){
-      //$('tbody').on('click','button' , deleteStudent);
      $('.getData').on('click',getStudentData);
      $('.editStudent').on('click',editStudent);
 }
 
 function editStudent(){
-$('#editModal').modal('show');
+      $('#editModal').modal('show');
 }
 
-
-
 function getStudentData(){
-      console.log('inside fnct');
+      console.log('got to the getstudentdata function');
       var serverData = {
             dataType:'json',
-            url: 'https://s-apis.learningfuze.com/sgt/get',
-            data:{api_key:'6O24flyBzw'},
-            method:"POST",
+            url: 'data.php',
+            data:{
+                  action:'readAll',
+            },
+            method:"GET",
             success:function(response){
                   console.log(response);
-             var responseArray = response.data;
-             student_array = responseArray;
-             updateStudentList(responseArray);
+                  var responseArray = response.data;
+                  student_array = responseArray;
+                  updateStudentList(responseArray);
+            },
+            error:function(){
+                  console.log('connection failed');
             }
             
-            }
-      $.ajax(serverData);
-
       }
+      $.ajax(serverData);
+}
 
 function handleAddClicked(){
       $('tbody').empty();
-       addStudent();
-
+      addStudent();
 }
 
 function handleCancelClick(){
@@ -54,23 +50,23 @@ function handleCancelClick(){
 
 function studentInfoToServer(studentobject){
       var studentInfoToServer = {
-            dataType:'json',
-            url: 'https://s-apis.learningfuze.com/sgt/create',
+            dataType:'JSON',
+            url: 'data.php',
             data:{
-                  api_key:'6O24flyBzw',
+                  action:'insert',
                   name:studentobject.name,
                   student_id:studentobject.id,
                   grade:studentobject.grade,
-                  course: studentobject.course
+                  course_name: studentobject.course_name
             },
-            method:"POST",
+            method:"get",
             success:function(response){
             getStudentData();
 
              console.log('sent the info!');
             }
       }
-            
+
       $.ajax(studentInfoToServer);
 
 }
@@ -79,47 +75,65 @@ function deleteStudentFromServer(studentobject){
       console.log(studentobject);
       var deleteStudentFromServer = {
             dataType:'json',
-            url: 'https://s-apis.learningfuze.com/sgt/delete',
+            url: 'data.php',
             data:{
-                  api_key:'6O24flyBzw',
+                  action:'delete',
                   student_id: studentobject.id
             },
-            method:"POST",
+            method:"get",
             success:function(response){
                   console.log(response);
-             getStudentData();
+             //getStudentData();
 
             }
       }
             
-      $.ajax(deleteStudentFromServer);
+$.ajax(deleteStudentFromServer);
 }
-
 
 function addStudent(){
       var newStudent = {
             name:null ,
-            course:null ,
+            course_name:null ,
             grade:null,
             id:null
       }
-      //newStudent.id = (student_array[student_array.length -1].id) + 1;
       newStudent.name = $('#studentName').val();
-      newStudent.course = $('#course').val();
+      newStudent.course_name = $('#course_name').val();
       newStudent.grade = $('#studentGrade').val();
       student_array.push(newStudent);
       studentInfoToServer(newStudent);
       clearAddStudentFormInputs();
-      updateStudentList(student_array);
-
-
+      $('#addModal').modal('show');
 }
 
-function clearAddStudentFormInputs(){
-      
+function handleUpdateClick(){
+      var studentNameEdit = $('#studentNameEdit');
+      var courseEdit = $('#courseEdit');
+      var studentGradeEdit = $('#studentGradeEdit');
+      var studentUpdate = {
+            dataType:'JSON',
+            url: 'data.php',
+            data:{
+                  action:'update',
+                  name:studentNameEdit,
+                  //student_id:studentobject.id,
+                  grade:studentGradeEdit,
+                  course_name: courseEdit
+            },
+            method:"get",
+            success:function(response){
+            console.log('sent the info!');
+            }
+      }
+
+      $.ajax(studentUpdate);
+}
+
+function clearAddStudentFormInputs(){  
       $('#studentName').val(" ");
-       $('#course').val(" ");
-       $('#studentGrade').val(" ");
+      $('#course_name').val(" ");
+      $('#studentGrade').val(" ");
 }
 
 function renderStudentOnDom(newStudent,i){
@@ -127,23 +141,20 @@ function renderStudentOnDom(newStudent,i){
       var tableRow = $('<tr>');
       tableBody.append(tableRow);
       tableRow.append(`<td> ${newStudent.name}</td>`);
-      tableRow.append(`<td> ${newStudent.course}</td>`);
+      tableRow.append(`<td> ${newStudent.course_name}</td>`);
       tableRow.append(`<td> ${newStudent.grade}</td>`);
       var deleteButton = $('<button>').addClass('btn btn-danger deletebtn').text('delete');
       deleteButton.on('click',function(){
             var targetObject = student_array.indexOf(newStudent);
             deleteStudentFromServer(newStudent);
-            
-            student_array.splice(targetObject,1);
-            
-           // student_array_id.splice(this.student_array.id,1);
+            student_array.splice(targetObject,1);            
             $('tbody').empty();
             updateStudentList(student_array);
       })
       tableRow.append(deleteButton);
       var editButton = $('<button>').addClass('btn btn-success editStudent').text('Edit');
             editButton.on('click',function(){
-                  $('#editModal').modal('show');
+                  editStudent();
             });
       tableRow.append(editButton);
 }
@@ -164,16 +175,20 @@ function calculateGradeAverage(student_array){
       var sum = 0;
       var average =0;
 
+
 for(var gradeIndex = 0 ; gradeIndex<student_array.length;gradeIndex++){
       sum = sum  + parseInt(student_array[gradeIndex].grade);
 }
       average = parseInt(sum/student_array.length);
-
       return average;
 }
 
 function renderGradeAverage(average){
-      $('.avgGrade').text(average);
+      if(!average){
+            $('.avgGrade').text('N/A');
+      }else{
+            $('.avgGrade').text(average);
+      }
 }
 
 
