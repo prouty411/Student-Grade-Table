@@ -171,8 +171,8 @@ function renderStudentOnDom(newStudent,i){
 }
 
 function updateStudentList(student_array){
-      if(student_array.length === 0){
-            $('Modal').modal('show');
+      if(!student_array){
+            $('emptyModal').modal('show');
             return;
       }
       for(var i = 0 ; i<student_array.length;i++){
