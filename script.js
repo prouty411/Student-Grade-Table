@@ -13,11 +13,10 @@ function addClickHandlersToElements(){
 }
 
 function editStudent(){
-      $('#editModal').modal('show');
+
 }
 
 function getStudentData(){
-      console.log('got to the getstudentdata function');
       var serverData = {
             dataType:'json',
             url: 'data.php',
@@ -26,7 +25,6 @@ function getStudentData(){
             },
             method:"GET",
             success:function(response){
-                  console.log(response);
                   var responseArray = response.data;
                   student_array = responseArray;
                   updateStudentList(responseArray);
@@ -40,7 +38,6 @@ function getStudentData(){
 }
 
 function handleAddClicked(){
-      $('tbody').empty();
       addStudent();
 }
 
@@ -60,10 +57,8 @@ function studentInfoToServer(studentobject){
                   course_name: studentobject.course_name
             },
             method:"get",
-            success:function(response){
+            success:function(){
             getStudentData();
-
-             console.log('sent the info!');
             }
       }
 
@@ -72,7 +67,6 @@ function studentInfoToServer(studentobject){
 }
 
 function deleteStudentFromServer(studentobject){
-      console.log(studentobject);
       var deleteStudentFromServer = {
             dataType:'json',
             url: 'data.php',
@@ -81,17 +75,18 @@ function deleteStudentFromServer(studentobject){
                   student_id: studentobject.id
             },
             method:"get",
-            success:function(response){
-                  console.log(response);
-             //getStudentData();
-
-            }
       }
             
 $.ajax(deleteStudentFromServer);
 }
 
 function addStudent(){
+      if($('#studentName').val().length <= 0 || $('#course_name').val().length <= 0 || $('#studentGrade').val().length <= 0){
+            $('#addModal').modal('show');
+            $('#infoModal').text('Please fill in all the fields.');
+            return;
+      }
+      $('tbody').empty();
       var newStudent = {
             name:null ,
             course_name:null ,
@@ -108,22 +103,33 @@ function addStudent(){
 }
 
 function handleUpdateClick(){
-      var studentNameEdit = $('#studentNameEdit');
-      var courseEdit = $('#courseEdit');
-      var studentGradeEdit = $('#studentGradeEdit');
+      var studentNameEdit = $('#studentNameEdit').val();
+      var courseEdit = $('#courseEdit').val();
+      var studentGradeEdit = $('#studentGradeEdit').val();
+      var individualId = parseInt($('#individualId').text());
+      console.log('made it to updateclick' , individualId ,studentNameEdit,courseEdit,studentGradeEdit);
+
       var studentUpdate = {
-            dataType:'JSON',
+            dataType:'json',
             url: 'data.php',
             data:{
                   action:'update',
                   name:studentNameEdit,
-                  //student_id:studentobject.id,
+                  student_id:individualId,
                   grade:studentGradeEdit,
                   course_name: courseEdit
             },
             method:"get",
-            success:function(response){
-            console.log('sent the info!');
+            success:function(){
+                  updateStudentList(student_array);
+                  $('#studentNameEdit').val("");
+                  $('#courseEdit').val("");
+                  $('#studentGradeEdit').val("");
+                  $('tbody').empty();
+                  getStudentData();
+            },
+            error:function(){
+                  console.log('error connecting to update');
             }
       }
 
@@ -150,16 +156,25 @@ function renderStudentOnDom(newStudent,i){
             student_array.splice(targetObject,1);            
             $('tbody').empty();
             updateStudentList(student_array);
-      })
+      });
       tableRow.append(deleteButton);
-      var editButton = $('<button>').addClass('btn btn-success editStudent').text('Edit');
-            editButton.on('click',function(){
-                  editStudent();
+      var editButton = $('<button>',{
+            class:"btn btn-success editStudent",
+            text:'Edit',
+            id:newStudent.id
+      });
+      editButton.on('click',function(newStudent){
+            $('#editModal').modal('show');
+            $('#individualId').text(editButton[0].id);
             });
       tableRow.append(editButton);
 }
 
 function updateStudentList(student_array){
+      if(student_array.length === 0){
+            $('Modal').modal('show');
+            return;
+      }
       for(var i = 0 ; i<student_array.length;i++){
             var temp = student_array[i];
             renderStudentOnDom(temp , i);

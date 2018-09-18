@@ -4,7 +4,6 @@ define('fromData',true);
 if(empty($_GET['action'])){
 	exit('no action specified');
 }
-require('mysql_connect.php');
 $output = [
 	'success'=> false, //we assume we will fail
 	'errors'=>[]

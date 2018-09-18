@@ -72,20 +72,41 @@
 
 
 
-  <!-- Modal -->
+  <!--edit Modal -->
   <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModaloLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content editModal">
         <div class="modal-header">
-          <h5 class="modal-title" id="editModalLabel">Edit student</h5>
+          <h5 class="modal-title" id="editModalLabel" onclick="editStudent()">Edit student</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
         <div class="modal-body"> <!-- modal content to be displayed-->
-          <input type="text" class="form-control " name="studentName" id="studentNameEdit" placeholder="Edit Name">
-          <input type="text" class="form-control" name="course" id="courseEdit"placeholder="Edit Student Course">
-          <input type="text" class="form-control" name="studentGrade" id="studentGradeEdit"placeholder="Edit Student Grade">
+            <div class="input-group form-group">
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-user"></span>
+                </span>
+                <input type="text" class="form-control " name="studentName" id="studentNameEdit" placeholder="Student Name">
+            </div>
+
+            <div class="input-group form-group">
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-list-alt"></span>
+                </span>
+                <input type="text" class="form-control" name="course" id="courseEdit"
+                       placeholder="Student Course">
+            </div>
+
+            <div class="input-group form-group">
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-education" ></span>
+                </span>
+                <input type="text" class="form-control" name="studentGrade" id="studentGradeEdit"
+                       placeholder="Student Grade">
+            </div>
+            <div>Student ID:</div>
+          <div id="individualId"></div>
 <!-- input buttons in modal above-->
         </div>
         <div class="modal-footer">
@@ -107,7 +128,25 @@
           </button>
         </div>
         <div class="modal-body"> <!-- modal content to be displayed-->
-          <p>Student been added.</p>
+          <p id="infoModal">Student been added.</p>
+<!-- input buttons in modal above-->
+        </div>
+        
+      </div>
+    </div>
+  </div>
+
+  <!-- infoModal -->
+  <div class="modal fade" id="emptyModal" tabindex="-1" role="dialog" aria-labelledby="emptyLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content editModal">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body"> <!-- modal content to be displayed-->
+          <p>No students are currently listed.</p>
 <!-- input buttons in modal above-->
         </div>
         
