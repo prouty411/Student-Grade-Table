@@ -135,7 +135,7 @@ function handleUpdateClick(){
       var testName = /^[a-zA-Z ]+$/gi.test($('#studentNameEdit').val());
       var testCourse = /^[a-zA-Z ]+$/gi.test($('#courseEdit').val());
       var testGrade = /(?:\b|-)([0-9]{1,2}[0]?|100)\b/gi.test($('#studentGradeEdit').val());
-      if(testName || testCourse || testGrade){
+      if(!testName || !testCourse || !testGrade){
             $('#editError').text('Check fields for correct format.');
             clearUpdateFields();
             return;
