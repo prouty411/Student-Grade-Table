@@ -26,8 +26,11 @@ function getStudentData(){
             method:"GET",
             success:function(response){
                   var responseArray = response.data;
-                  student_array = responseArray;
+                  if(!responseArray === undefined){
+                        student_array = responseArray;
+                  }
                   updateStudentList(responseArray);
+                  student_array = responseArray;
             },
             error:function(){
                   console.log('connection failed');
@@ -82,7 +85,7 @@ $.ajax(deleteStudentFromServer);
 
 function addStudent(){
       if($('#studentName').val().length <= 0 || $('#course_name').val().length <= 0 || $('#studentGrade').val().length <= 0){
-            $('#addModal').modal('show');
+            $('#addModal').modal("show");
             $('#infoModal').text('Please fill in all the fields.');
             return;
       }
@@ -99,15 +102,27 @@ function addStudent(){
       student_array.push(newStudent);
       studentInfoToServer(newStudent);
       clearAddStudentFormInputs();
+      $('#infoModal').text('Studen has been added.');
       $('#addModal').modal('show');
+
+      for(var i = 0 ; i<student_array.length;i++){
+            var temp = student_array[i];
+            renderStudentOnDom(temp , i);
+            student_array_id.push(student_array[i].id);
+      }
+      //renderStudentOnDom(student_array);
 }
 
 function handleUpdateClick(){
+      if($('#studentName').val().length <= 0 || $('#course_name').val().length <= 0 || $('#studentGrade').val().length <= 0){
+            $('#editError').text('Please complete all the fields.');
+            return;
+      }
+      $('#editError').text('');
       var studentNameEdit = $('#studentNameEdit').val();
       var courseEdit = $('#courseEdit').val();
       var studentGradeEdit = $('#studentGradeEdit').val();
       var individualId = parseInt($('#individualId').text());
-      console.log('made it to updateclick' , individualId ,studentNameEdit,courseEdit,studentGradeEdit);
 
       var studentUpdate = {
             dataType:'json',
@@ -137,9 +152,9 @@ function handleUpdateClick(){
 }
 
 function clearAddStudentFormInputs(){  
-      $('#studentName').val(" ");
-      $('#course_name').val(" ");
-      $('#studentGrade').val(" ");
+      $('#studentName').val("");
+      $('#course_name').val("");
+      $('#studentGrade').val("");
 }
 
 function renderStudentOnDom(newStudent,i){
@@ -155,6 +170,7 @@ function renderStudentOnDom(newStudent,i){
             deleteStudentFromServer(newStudent);
             student_array.splice(targetObject,1);            
             $('tbody').empty();
+            //getStudentData();
             updateStudentList(student_array);
       });
       tableRow.append(deleteButton);
@@ -175,6 +191,8 @@ function updateStudentList(student_array){
             $('emptyModal').modal('show');
             return;
       }
+      $('tbody').empty();
+
       for(var i = 0 ; i<student_array.length;i++){
             var temp = student_array[i];
             renderStudentOnDom(temp , i);

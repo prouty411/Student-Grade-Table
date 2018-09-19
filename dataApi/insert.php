@@ -1,8 +1,8 @@
 <?php
 
-$name = $_GET['name'];
-$grade = $_GET['grade'];
-$course_name = $_GET['course_name'];
+$name = mysqli_real_escape_string($conn,$_GET['name']);
+$grade = mysqli_real_escape_string($conn,$_GET['grade']);
+$course_name = mysqli_real_escape_string($conn,$_GET['course_name']);
 
 $sql = "INSERT INTO `student_data`(`name`, `grade`, `course_name`) 
     VALUES ('$name','$grade','$course_name')";

@@ -2,9 +2,9 @@
 
 
 $id = $_GET['student_id'];
-$name = $_GET['name'];
-$course = $_GET['course_name'];
-$grade = $_GET['grade'];
+$name = mysqli_real_escape_string($conn,$_GET['name']);
+$course = mysqli_real_escape_string($conn,$_GET['course_name']);
+$grade = mysqli_real_escape_string($conn,$_GET['grade']);
 $sql = "UPDATE `student_data` SET `name`='$name',`grade`='$grade',`course_name`='$course' WHERE `id`='$id' " ;
 $result = $conn->query($sql);
 
