@@ -9,11 +9,6 @@ function initializeApp(){
 
 function addClickHandlersToElements(){
      $('.getData').on('click',getStudentData);
-     $('.editStudent').on('click',editStudent);
-}
-
-function editStudent(){
-
 }
 
 function getStudentData(){
@@ -87,6 +82,16 @@ function addStudent(){
       if($('#studentName').val().length <= 0 || $('#course_name').val().length <= 0 || $('#studentGrade').val().length <= 0){
             $('#addModal').modal("show");
             $('#infoModal').text('Please fill in all the fields.');
+            clearAddStudentFormInputs();
+            return;
+      }
+      var testName = /^[a-zA-Z ]+$/gi.test($('#studentName').val());
+      var testCourse = /^[a-zA-Z ]+$/gi.test($('#course_name').val());
+      var testGrade = /(?:\b|-)([0-9]{1,2}[0]?|100)\b/gi.test($('#studentGrade').val());
+      if(testName || testCourse || testGrade){
+            $('#addModal').modal("show");
+            $('#infoModal').text('Check fields for correct format.');
+            clearAddStudentFormInputs();
             return;
       }
       $('tbody').empty();
@@ -96,6 +101,8 @@ function addStudent(){
             grade:null,
             id:null
       }
+      
+      
       newStudent.name = $('#studentName').val();
       newStudent.course_name = $('#course_name').val();
       newStudent.grade = $('#studentGrade').val();
@@ -113,9 +120,24 @@ function addStudent(){
       //renderStudentOnDom(student_array);
 }
 
+function clearUpdateFields(){
+      $('#studentNameEdit').val("");
+      $('#courseEdit').val("");
+      $('#studentGradeEdit').val("");
+}
+
 function handleUpdateClick(){
-      if($('#studentName').val().length <= 0 || $('#course_name').val().length <= 0 || $('#studentGrade').val().length <= 0){
+      if($('#studentNameEdit').val().length <= 0 || $('#courseEdit').val().length <= 0 || $('#studentGradeEdit').val().length <= 0){
             $('#editError').text('Please complete all the fields.');
+            clearUpdateFields();
+            return;
+      }
+      var testName = /^[a-zA-Z ]+$/gi.test($('#studentNameEdit').val());
+      var testCourse = /^[a-zA-Z ]+$/gi.test($('#courseEdit').val());
+      var testGrade = /(?:\b|-)([0-9]{1,2}[0]?|100)\b/gi.test($('#studentGradeEdit').val());
+      if(testName || testCourse || testGrade){
+            $('#editError').text('Check fields for correct format.');
+            clearUpdateFields();
             return;
       }
       $('#editError').text('');
