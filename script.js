@@ -4,11 +4,26 @@ var student_array =[];
 var student_array_id = [];
 
 function initializeApp(){
-      addClickHandlersToElements();
-}
+      $('#studentName').on('click',function(){
+            $('#studentName').parent().removeClass('has-error');
+      })
+      $('#course_name').on('click',function(){
+            $('#course_name').parent().removeClass('has-error');
+      })
+      $('#studentGrade').on('click',function(){
+            $('#studentGrade').parent().removeClass('has-error');
+      })
 
-function addClickHandlersToElements(){
-     $('.getData').on('click',getStudentData);
+      $('#studentNameEdit').on('click',function(){
+            $('#studentNameEdit').parent().removeClass('has-error');
+      })
+      $('#courseEdit').on('click',function(){
+            $('#courseEdit').parent().removeClass('has-error');
+      })
+      $('#studentGradeEdit').on('click',function(){
+            $('#studentGradeEdit').parent().removeClass('has-error');
+      })
+      getStudentData();
 }
 
 function getStudentData(){
@@ -24,8 +39,14 @@ function getStudentData(){
                   if(!responseArray === undefined){
                         student_array = responseArray;
                   }
-                  updateStudentList(responseArray);
-                  student_array = responseArray;
+                  if(responseArray === undefined){
+                        student_array = student_array;
+                  }else{
+                        student_array = responseArray;
+
+                  }
+                  updateStudentList(student_array);
+
             },
             error:function(){
                   console.log('connection failed');
@@ -55,13 +76,15 @@ function studentInfoToServer(studentobject){
                   course_name: studentobject.course_name
             },
             method:"get",
+            error:function(){
+                  console.log('error');
+            },
             success:function(){
             getStudentData();
+            updateStudentList(student_array);
             }
       }
-
       $.ajax(studentInfoToServer);
-
 }
 
 function deleteStudentFromServer(studentobject){
@@ -70,9 +93,16 @@ function deleteStudentFromServer(studentobject){
             url: 'data.php',
             data:{
                   action:'delete',
-                  student_id: studentobject.id
+                  student_id: studentobject
             },
             method:"get",
+            error:function(){
+                  console.log('error');
+            },
+            success:function(){
+                  getStudentData();
+                  updateStudentList(student_array);
+            }
       }
             
 $.ajax(deleteStudentFromServer);
@@ -88,12 +118,34 @@ function addStudent(){
       var testName = /^[a-zA-Z ]+$/gi.test($('#studentName').val());
       var testCourse = /^[a-zA-Z ]+$/gi.test($('#course_name').val());
       var testGrade = /(?:\b|-)([0-9]{1,2}[0]?|100)\b/gi.test($('#studentGrade').val());
-      if(testName || testCourse || testGrade){
+      if(!testName){
             $('#addModal').modal("show");
-            $('#infoModal').text('Check fields for correct format.');
+            $('#infoModal').text('Please input a valid name.');
+            $('#studentName').parent().addClass("has-error");
             clearAddStudentFormInputs();
             return;
       }
+      if(!testCourse){
+            $('#addModal').modal("show");
+            $('#infoModal').text('Please input a valid course name.');
+            $('#course_name').parent().addClass("has-error");
+            clearAddStudentFormInputs();
+            return;
+      }
+      if(!testGrade){
+            $('#addModal').modal("show");
+            $('#infoModal').text('Please input a valid grade.');
+            $('#studentGrade').parent().addClass("has-error");
+            clearAddStudentFormInputs();
+            return;
+      }
+      if($('#studentGrade').val() < 0){
+            $('#addModal').modal("show");
+            $('#infoModal').text('Grade must be between 0-100.');
+            clearAddStudentFormInputs();
+            return;
+      }
+
       $('tbody').empty();
       var newStudent = {
             name:null ,
@@ -101,15 +153,12 @@ function addStudent(){
             grade:null,
             id:null
       }
-      
-      
       newStudent.name = $('#studentName').val();
       newStudent.course_name = $('#course_name').val();
       newStudent.grade = $('#studentGrade').val();
-      student_array.push(newStudent);
       studentInfoToServer(newStudent);
       clearAddStudentFormInputs();
-      $('#infoModal').text('Studen has been added.');
+      $('#infoModal').text('Student has been added.');
       $('#addModal').modal('show');
 
       for(var i = 0 ; i<student_array.length;i++){
@@ -117,8 +166,11 @@ function addStudent(){
             renderStudentOnDom(temp , i);
             student_array_id.push(student_array[i].id);
       }
-      //renderStudentOnDom(student_array);
 }
+function hideModal(){
+      $('#deleteModal').modal('hide');
+}
+
 
 function clearUpdateFields(){
       $('#studentNameEdit').val("");
@@ -135,8 +187,21 @@ function handleUpdateClick(){
       var testName = /^[a-zA-Z ]+$/gi.test($('#studentNameEdit').val());
       var testCourse = /^[a-zA-Z ]+$/gi.test($('#courseEdit').val());
       var testGrade = /(?:\b|-)([0-9]{1,2}[0]?|100)\b/gi.test($('#studentGradeEdit').val());
-      if(!testName || !testCourse || !testGrade){
-            $('#editError').text('Check fields for correct format.');
+      if(!testName){
+            $('#editError').text('Please input a valid name.');
+            $('#studentNameEdit').parent().addClass("has-error");
+            clearUpdateFields();
+            return;
+      }
+      if(!testCourse){
+            $('#editError').text('Please input a valid course name.');
+            $('#courseEdit').parent().addClass("has-error");
+            clearUpdateFields();
+            return;
+      }
+      if(!testGrade){
+            $('#editError').text('Please input a valid grade.');
+            $('#studentGradeEdit').parent().addClass("has-error");
             clearUpdateFields();
             return;
       }
@@ -144,8 +209,7 @@ function handleUpdateClick(){
       var studentNameEdit = $('#studentNameEdit').val();
       var courseEdit = $('#courseEdit').val();
       var studentGradeEdit = $('#studentGradeEdit').val();
-      var individualId = parseInt($('#individualId').text());
-
+      var individualId = parseInt($('.individualId').attr("id"));
       var studentUpdate = {
             dataType:'json',
             url: 'data.php',
@@ -163,6 +227,7 @@ function handleUpdateClick(){
                   $('#courseEdit').val("");
                   $('#studentGradeEdit').val("");
                   $('tbody').empty();
+                  $('#editModal').modal('hide');
                   getStudentData();
             },
             error:function(){
@@ -181,29 +246,43 @@ function clearAddStudentFormInputs(){
 
 function renderStudentOnDom(newStudent,i){
       var tableBody = $('tbody');
-      var tableRow = $('<tr>');
+      var tableRow = $('<tr>', {
+            style: 'border-bottom: 1px solid #ddd'
+      });
       tableBody.append(tableRow);
       tableRow.append(`<td> ${newStudent.name}</td>`);
       tableRow.append(`<td> ${newStudent.course_name}</td>`);
       tableRow.append(`<td> ${newStudent.grade}</td>`);
-      var deleteButton = $('<button>').addClass('btn btn-danger deletebtn').text('delete');
+      var deleteButton = $('<button>',{
+            class:'btn btn-danger deletebtn',
+            id:newStudent.id,
+            text:'Delete',
+            style:'margin-right:3% ; margin-bottom:3%;margin-top:2%'
+      });
       deleteButton.on('click',function(){
-            var targetObject = student_array.indexOf(newStudent);
-            deleteStudentFromServer(newStudent);
-            student_array.splice(targetObject,1);            
-            $('tbody').empty();
-            //getStudentData();
-            updateStudentList(student_array);
+            var self = $(this)
+            $('.modalDeleteButton').on('click',function(){
+                  var currentStudentId = parseInt(self.attr('id'));
+                  deleteStudentFromServer(currentStudentId);
+                  $('tbody').empty();
+                  student_array = [];
+                  getStudentData();
+                  hideModal();
+            })
+            $('#deleteModal').modal('show');
+            
       });
       tableRow.append(deleteButton);
       var editButton = $('<button>',{
             class:"btn btn-success editStudent",
-            text:'Edit',
-            id:newStudent.id
+            text:'Update',
+            id:newStudent.id,
+            style:'margin-bottom:3%;margin-top:2%'
       });
       editButton.on('click',function(newStudent){
             $('#editModal').modal('show');
-            $('#individualId').text(editButton[0].id);
+            // $('#individualId').text(editButton[0].id);
+            $('.individualId').attr({"id":editButton[0].id});
             });
       tableRow.append(editButton);
 }
@@ -229,13 +308,11 @@ function updateStudentList(student_array){
 function calculateGradeAverage(student_array){
       var sum = 0;
       var average =0;
-
-
-for(var gradeIndex = 0 ; gradeIndex<student_array.length;gradeIndex++){
-      sum = sum  + parseInt(student_array[gradeIndex].grade);
-}
+      for(var gradeIndex = 0 ; gradeIndex<student_array.length;gradeIndex++){
+            sum = sum  + parseInt(student_array[gradeIndex].grade);
+      }
       average = parseInt(sum/student_array.length);
-      return average;
+      return (average + '%');
 }
 
 function renderGradeAverage(average){
