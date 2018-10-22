@@ -5,25 +5,35 @@ var student_array_id = [];
 
 function initializeApp(){
       $('#studentName').on('click',function(){
-            $('#studentName').parent().removeClass('has-error');
+            removeClassError($('#studentName'));
+            // $('#studentName').parent().removeClass('has-error');
       })
       $('#course_name').on('click',function(){
-            $('#course_name').parent().removeClass('has-error');
+            // $('#course_name').parent().removeClass('has-error');
+            removeClassError($('#course_name'));
       })
       $('#studentGrade').on('click',function(){
-            $('#studentGrade').parent().removeClass('has-error');
+            // $('#studentGrade').parent().removeClass('has-error');
+            removeClassError($('#studentGrade'));
       })
 
       $('#studentNameEdit').on('click',function(){
-            $('#studentNameEdit').parent().removeClass('has-error');
+            // $('#studentNameEdit').parent().removeClass('has-error');
+            removeClassError($('#studentNameEdit'));
       })
       $('#courseEdit').on('click',function(){
-            $('#courseEdit').parent().removeClass('has-error');
+            // $('#courseEdit').parent().removeClass('has-error');
+            removeClassError($('#courseEdit'));
       })
       $('#studentGradeEdit').on('click',function(){
-            $('#studentGradeEdit').parent().removeClass('has-error');
+            removeClassError($('#studentGradeEdit'));
+            // $('#studentGradeEdit').parent().removeClass('has-error');
       })
       getStudentData();
+}
+
+function removeClassError(element){
+      element.parent().removeClass('has-error');
 }
 
 function getStudentData(){
@@ -109,7 +119,7 @@ $.ajax(deleteStudentFromServer);
 }
 
 function addStudent(){
-      if($('#studentName').val().length <= 0 || $('#course_name').val().length <= 0 || $('#studentGrade').val().length <= 0){
+      if($('#studentName').val().length === 0 || $('#course_name').val().length === 0 || $('#studentGrade').val().length === 0){
             $('#addModal').modal("show");
             $('#infoModal').text('Please fill in all the fields.');
             clearAddStudentFormInputs();
@@ -181,7 +191,6 @@ function clearUpdateFields(){
 function handleUpdateClick(){
       if($('#studentNameEdit').val().length <= 0 || $('#courseEdit').val().length <= 0 || $('#studentGradeEdit').val().length <= 0){
             $('#editError').text('Please complete all the fields.');
-            clearUpdateFields();
             return;
       }
       var testName = /^[a-zA-Z ]+$/gi.test($('#studentNameEdit').val());
@@ -190,19 +199,16 @@ function handleUpdateClick(){
       if(!testName){
             $('#editError').text('Please input a valid name.');
             $('#studentNameEdit').parent().addClass("has-error");
-            clearUpdateFields();
             return;
       }
       if(!testCourse){
             $('#editError').text('Please input a valid course name.');
             $('#courseEdit').parent().addClass("has-error");
-            clearUpdateFields();
             return;
       }
       if(!testGrade){
             $('#editError').text('Please input a valid grade.');
             $('#studentGradeEdit').parent().addClass("has-error");
-            clearUpdateFields();
             return;
       }
       $('#editError').text('');
@@ -254,10 +260,9 @@ function renderStudentOnDom(newStudent,i){
       tableRow.append(`<td> ${newStudent.course_name}</td>`);
       tableRow.append(`<td> ${newStudent.grade}</td>`);
       var deleteButton = $('<button>',{
-            class:'btn btn-danger deletebtn',
+            class:'btn btn-danger deletebtn glyphicon glyphicon-trash',
             id:newStudent.id,
-            text:'Delete',
-            style:'margin-right:3% ; margin-bottom:3%;margin-top:2%'
+            style:'margin-right:3% ; margin-bottom:3%;'
       });
       deleteButton.on('click',function(){
             var self = $(this)
@@ -274,14 +279,12 @@ function renderStudentOnDom(newStudent,i){
       });
       tableRow.append(deleteButton);
       var editButton = $('<button>',{
-            class:"btn btn-success editStudent",
-            text:'Update',
+            class:"btn btn-success editStudent fa fa-pencil",
             id:newStudent.id,
             style:'margin-bottom:3%;margin-top:2%'
       });
       editButton.on('click',function(newStudent){
             $('#editModal').modal('show');
-            // $('#individualId').text(editButton[0].id);
             $('.individualId').attr({"id":editButton[0].id});
             });
       tableRow.append(editButton);
