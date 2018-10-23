@@ -189,7 +189,7 @@ function clearUpdateFields(){
 }
 
 function handleUpdateClick(){
-      if($('#studentNameEdit').val().length <= 0 || $('#courseEdit').val().length <= 0 || $('#studentGradeEdit').val().length <= 0){
+      if($('#studentNameEdit').val().length === 0 || $('#courseEdit').val().length === 0 || $('#studentGradeEdit').val().length === 0){
             $('#editError').text('Please complete all the fields.');
             return;
       }
@@ -251,6 +251,7 @@ function clearAddStudentFormInputs(){
 }
 
 function renderStudentOnDom(newStudent,i){
+      console.log(newStudent);
       var tableBody = $('tbody');
       var tableRow = $('<tr>', {
             style: 'border-bottom: 1px solid #ddd'
@@ -281,11 +282,21 @@ function renderStudentOnDom(newStudent,i){
       var editButton = $('<button>',{
             class:"btn btn-success editStudent fa fa-pencil",
             id:newStudent.id,
+            studentName: newStudent.name,
+            studentCourse: newStudent.course_name,
+            studentGrade: newStudent.grade,
             style:'margin-bottom:3%;margin-top:2%'
       });
       editButton.on('click',function(newStudent){
             $('#editModal').modal('show');
             $('.individualId').attr({"id":editButton[0].id});
+            $('.individualId').attr({"studentName":editButton[0].attributes[2].nodeValue});
+            $('.individualId').attr({"studentCourse":editButton[0].attributes[3].nodeValue});
+            $('.individualId').attr({"studentGrade":editButton[0].attributes[4].nodeValue});
+            $('#studentNameEdit').val($('.individualId').attr("studentname"));
+            $('#courseEdit').val($('.individualId').attr("studentcourse"));
+            $('#studentGradeEdit').val($('.individualId').attr("studentgrade"));
+
             });
       tableRow.append(editButton);
 }
