@@ -4,30 +4,8 @@ var student_array =[];
 var student_array_id = [];
 
 function initializeApp(){
-      $('#studentName').on('click',function(){
-            removeClassError($('#studentName'));
-            // $('#studentName').parent().removeClass('has-error');
-      })
-      $('#course_name').on('click',function(){
-            // $('#course_name').parent().removeClass('has-error');
-            removeClassError($('#course_name'));
-      })
-      $('#studentGrade').on('click',function(){
-            // $('#studentGrade').parent().removeClass('has-error');
-            removeClassError($('#studentGrade'));
-      })
-
-      $('#studentNameEdit').on('click',function(){
-            // $('#studentNameEdit').parent().removeClass('has-error');
-            removeClassError($('#studentNameEdit'));
-      })
-      $('#courseEdit').on('click',function(){
-            // $('#courseEdit').parent().removeClass('has-error');
-            removeClassError($('#courseEdit'));
-      })
-      $('#studentGradeEdit').on('click',function(){
-            removeClassError($('#studentGradeEdit'));
-            // $('#studentGradeEdit').parent().removeClass('has-error');
+      $('#studentName, #course_name, #studentGrade, #studentNameEdit, #courseEdit, #studentGradeEdit').on('click',function(){
+            removeClassError($(this));
       })
       getStudentData();
 }
