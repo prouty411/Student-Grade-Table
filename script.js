@@ -304,6 +304,9 @@ function calculateGradeAverage(student_array){
             sum = sum  + parseInt(student_array[gradeIndex].grade);
       }
       average = parseInt(sum/student_array.length);
+      if(!average){
+            return('0%');
+      }
       return (average + '%');
 }
 
