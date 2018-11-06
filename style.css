@@ -49,7 +49,7 @@
     margin-right: 7vw;
   }
   #initialLoader{
-    visibility: visible;      
+    visibility: hidden;      
   }
   
   @-webkit-keyframes spin {
