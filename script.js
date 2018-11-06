@@ -4,14 +4,26 @@ var student_array =[];
 var student_array_id = [];
 
 function initializeApp(){
+      displayInitialLoader();
       $('#studentName, #course_name, #studentGrade, #studentNameEdit, #courseEdit, #studentGradeEdit').on('click',function(){
             removeClassError($(this));
       })
       getStudentData();
+      $('#editModal').on('hide.bs.modal', function (e) {
+            resetLoaderAndButtons();
+            
+          });
+}
+function resetLoaderAndButtons(){
+      document.getElementById("loader").style.visibility = "hidden";
+      $('.saveChanges').prop("disabled",false);
 }
 
 function removeClassError(element){
       element.parent().removeClass('has-error');
+}
+function displayInitialLoader(){
+      document.getElementById("initialLoader").style.visibility = "visible";
 }
 
 function getStudentData(){
@@ -23,6 +35,7 @@ function getStudentData(){
             },
             method:"GET",
             success:function(response){
+                  document.getElementById("initialLoader").style.visibility = "hidden";
                   var responseArray = response.data;
                   if(!responseArray === undefined){
                         student_array = responseArray;
@@ -88,8 +101,11 @@ function deleteStudentFromServer(studentobject){
                   console.log('error');
             },
             success:function(){
+                  hideModal();
                   getStudentData();
                   updateStudentList(student_array);
+                  document.getElementById("loaderTwo").style.visibility = "hidden";
+
             }
       }
             
@@ -100,7 +116,6 @@ function addStudent(){
       if($('#studentName').val().length === 0 || $('#course_name').val().length === 0 || $('#studentGrade').val().length === 0){
             $('#addModal').modal("show");
             $('#infoModal').text('Please fill in all the fields.');
-            clearAddStudentFormInputs();
             return;
       }
       var testName = /^[a-zA-Z ]+$/gi.test($('#studentName').val());
@@ -110,27 +125,23 @@ function addStudent(){
             $('#addModal').modal("show");
             $('#infoModal').text('Please input a valid name.');
             $('#studentName').parent().addClass("has-error");
-            clearAddStudentFormInputs();
             return;
       }
       if(!testCourse){
             $('#addModal').modal("show");
             $('#infoModal').text('Please input a valid course name.');
             $('#course_name').parent().addClass("has-error");
-            clearAddStudentFormInputs();
             return;
       }
       if(!testGrade){
             $('#addModal').modal("show");
             $('#infoModal').text('Please input a valid grade.');
             $('#studentGrade').parent().addClass("has-error");
-            clearAddStudentFormInputs();
             return;
       }
       if($('#studentGrade').val() < 0){
             $('#addModal').modal("show");
             $('#infoModal').text('Grade must be between 0-100.');
-            clearAddStudentFormInputs();
             return;
       }
 
@@ -189,6 +200,9 @@ function handleUpdateClick(){
             $('#studentGradeEdit').parent().addClass("has-error");
             return;
       }
+      document.getElementById("loader").style.visibility = "visible";
+      $('.saveChanges').prop("disabled",true);
+
       $('#editError').text('');
       var studentNameEdit = $('#studentNameEdit').val();
       var courseEdit = $('#courseEdit').val();
@@ -206,6 +220,7 @@ function handleUpdateClick(){
             },
             method:"get",
             success:function(){
+                 
                   updateStudentList(student_array);
                   $('#studentNameEdit').val("");
                   $('#courseEdit').val("");
@@ -229,15 +244,14 @@ function clearAddStudentFormInputs(){
 }
 
 function renderStudentOnDom(newStudent,i){
-      console.log(newStudent);
       var tableBody = $('tbody');
       var tableRow = $('<tr>', {
             style: 'border-bottom: 1px solid #ddd'
       });
       tableBody.append(tableRow);
-      tableRow.append(`<td> ${newStudent.name}</td>`);
-      tableRow.append(`<td> ${newStudent.course_name}</td>`);
-      tableRow.append(`<td> ${newStudent.grade}</td>`);
+      tableRow.append(`<td class="tableInfo"> ${newStudent.name}</td>`);
+      tableRow.append(`<td class="tableInfo"> ${newStudent.course_name}</td>`);
+      tableRow.append(`<td class="tableInfo"> ${newStudent.grade}</td>`);
       var deleteButton = $('<button>',{
             class:'btn btn-danger deletebtn glyphicon glyphicon-trash',
             id:newStudent.id,
@@ -251,7 +265,8 @@ function renderStudentOnDom(newStudent,i){
                   $('tbody').empty();
                   student_array = [];
                   getStudentData();
-                  hideModal();
+                  document.getElementById("loaderTwo").style.visibility = "visible";
+
             })
             $('#deleteModal').modal('show');
             

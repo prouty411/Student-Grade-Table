@@ -13,3 +13,13 @@ ALTER TABLE `student_data`
 
 ALTER TABLE `student_data`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=210;COMMIT;
+
+
+  INSERT INTO `student_data`(`name`, `grade`, `course_name`) 
+  
+  VALUES 
+  ('greg','80','math'),
+  ('stephanie','55','english'),
+  ('christopher','87','history'),
+  ('alicia','78','writing'),
+  ('frankie','13','biology');
